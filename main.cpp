@@ -5,9 +5,12 @@
 #include <list>
 
 #define SLEEP_MS 100
+#define SLEEP_TO_COMPLETE_MS 3000
 
 #define BOARD_SIZE 50
 #define SHAPE_SIZE 5.f
+
+#define BOARD_SIZE_PIXELS BOARD_SIZE * SHAPE_SIZE * 2
 
 class Direction {
 	public:
@@ -52,7 +55,29 @@ class Point {
 int main(int argc, char ** argv)
 {
 	std::srand(std::time(nullptr));
-	sf::RenderWindow window(sf::VideoMode(BOARD_SIZE * SHAPE_SIZE * 2, BOARD_SIZE * SHAPE_SIZE * 2), "Snake");
+	sf::RenderWindow window(sf::VideoMode(BOARD_SIZE_PIXELS, BOARD_SIZE_PIXELS), "Snake");
+
+	sf::Font font;
+	if(!font.loadFromFile("fonts/BLKCHCRY.TTF"))
+	{
+		std::cout << "failed load font" << std::endl;
+		return -1;
+	}
+	sf::Text scoreLabel;
+	scoreLabel.setFont(font);
+	scoreLabel.setCharacterSize(24);
+	scoreLabel.setFillColor(sf::Color::Red);
+	scoreLabel.setPosition(BOARD_SIZE_PIXELS - 130,30);
+
+	sf::Text gameOverLabel;
+	gameOverLabel.setString("GAME OVER");
+	gameOverLabel.setFont(font);
+	gameOverLabel.setCharacterSize(48);
+	gameOverLabel.setFillColor(sf::Color::Red);
+	int diffX = gameOverLabel.getGlobalBounds().width / 2;
+	int diffY = gameOverLabel.getGlobalBounds().height / 2;
+	gameOverLabel.setPosition(BOARD_SIZE_PIXELS/2 - diffX, BOARD_SIZE_PIXELS/2 - diffY);
+
 
 	Direction left(-1,0);
 	Direction right(1,0);
@@ -142,10 +167,16 @@ int main(int argc, char ** argv)
 			window.draw(currentShape);
 		}
 
+		scoreLabel.setString("Score: " + std::to_string(score));
+		window.draw(scoreLabel);
+
 		//game over
 		if(countCur > 1)
 		{
 			std::cout << "GAME OVER with score: " << score << std::endl;
+			window.draw(gameOverLabel);
+			window.display();
+			sf::sleep(sf::milliseconds(SLEEP_TO_COMPLETE_MS));
 			score = 0;
 			snakeHead = start;
 			markedPoints = std::list<Point>();
@@ -157,6 +188,7 @@ int main(int argc, char ** argv)
 		appleShape.setFillColor(sf::Color::Green);
 		appleShape.setPosition(apple._x * SHAPE_SIZE*2, apple._y * SHAPE_SIZE*2);
 		window.draw(appleShape);
+
 
 		window.display();
 
