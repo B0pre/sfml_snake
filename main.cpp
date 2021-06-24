@@ -113,6 +113,12 @@ int main(int argc, char ** argv)
 				window.close();
 		}
 
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+		{
+			std::cout << "exiting.." << std::endl;
+			return 0;
+		}
+
 		bool turned = false;
 		if(!turned && sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		{
