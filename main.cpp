@@ -94,6 +94,7 @@ int main(int argc, char ** argv)
 	markedPoints.push_back(snakeHead);
 
 	unsigned long long score = 0;
+	bool paused = false;
 
 	while (window.isOpen())
 	{
@@ -117,6 +118,27 @@ int main(int argc, char ** argv)
 		{
 			std::cout << "exiting.." << std::endl;
 			return 0;
+		}
+
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+		{
+			paused = !paused;
+		}
+
+		if(paused)
+		{
+			sf::Text pauseLabel;
+			pauseLabel.setString("paused");
+			pauseLabel.setFont(font);
+			pauseLabel.setCharacterSize(48);
+			pauseLabel.setFillColor(sf::Color::Red);
+			int diffX = pauseLabel.getGlobalBounds().width / 2;
+			int diffY = pauseLabel.getGlobalBounds().height / 2;
+			pauseLabel.setPosition(BOARD_SIZE_PIXELS/2 - diffX, BOARD_SIZE_PIXELS/2 - diffY);
+			window.draw(pauseLabel);
+			window.display();
+			sf::sleep(sf::milliseconds(100));
+			continue;
 		}
 
 		bool turned = false;
